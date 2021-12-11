@@ -18,6 +18,17 @@ GREEN = (0, 255, 0)
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Tic Tac Toe")
 
+
+def draw_marker(board):
+    for i, rows in enumerate(board):
+        for j, item in enumerate(rows):
+            if item == 1:
+                pygame.draw.line(screen, RED, (WIDTH//3*j + 25, HEIGHT//3*i +25), (WIDTH//3 * (j+1) -25, HEIGHT//3*(i+1) -25), 10)
+                pygame.draw.line(screen, RED, (WIDTH//3*(j+1) - 25, HEIGHT//3*i +25), (WIDTH//3 * j +25, HEIGHT//3*(i+1) -25), 10)
+            elif item == 2:
+                pygame.draw.circle(screen, GREEN, (WIDTH//3*j +150, HEIGHT//3*i +150), 125, 10)
+
+
 def update_board(board, x, y, player):
     if board[x][y] == 0:
         board[x][y] = player
@@ -89,6 +100,8 @@ while gameLoop:
             x, y = cell_collision(boardRect, pos)
             player = update_board(board, x, y, player)
             print(board)
+
+    draw_marker(board)
 
     pygame.display.update()
 
