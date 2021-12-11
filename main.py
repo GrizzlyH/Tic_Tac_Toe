@@ -5,6 +5,8 @@ pygame.init()
 #  Game variables
 WIDTH = 900
 HEIGHT = 900
+mouseClicked = False
+player = 1
 
 # colors
 WHITE = (255, 255, 255)
@@ -15,6 +17,25 @@ GREEN = (0, 255, 0)
 #  Creating the pygame screen
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Tic Tac Toe")
+
+def update_board(board, x, y, player):
+    if board[x][y] == 0:
+        board[x][y] = player
+        if player == 1:
+            player = 2
+            return player
+        else:
+            player = 1
+            return player
+    else:
+        return player
+
+
+def cell_collision(boardRect, pos):
+    for x, rows in enumerate(boardRect):
+        for y, columns in enumerate(rows):
+            if columns.collidepoint(pos):
+                return x, y
 
 
 def board_rects(board):
@@ -60,7 +81,14 @@ while gameLoop:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             gameLoop = False
-
+        if event.type == pygame.MOUSEBUTTONDOWN and mouseClicked == False:
+            mouseClicked = True
+        if event.type == pygame.MOUSEBUTTONUP and mouseClicked == True:
+            mouseclicked = False
+            pos = pygame.mouse.get_pos()
+            x, y = cell_collision(boardRect, pos)
+            player = update_board(board, x, y, player)
+            print(board)
 
     pygame.display.update()
 
