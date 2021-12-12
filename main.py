@@ -7,6 +7,7 @@ WIDTH = 900
 HEIGHT = 900
 mouseClicked = False
 player = 1
+GAMEOVER = False
 
 # colors
 WHITE = (255, 255, 255)
@@ -19,7 +20,28 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Tic Tac Toe")
 
 
+def check_for_winner(board):
+    """Determine if a winning move has been made"""
+    global GAMEOVER
+    for rows in board:
+        if not 0 in rows:
+            if sum(rows) == 3 or sum(rows) == 6:
+                print(f'The winner is {player}')
+                GAMEOVER = True
+    for i in range(0, 3):
+        if board[0][i] * board[1][i] * board[2][i] == 1 or board[0][i] * board[1][i] * board[2][i] == 8:
+            print(f'The winner is {player}')
+            GAMEOVER = True
+    if board[0][0] * board[1][1] * board[2][2] == 1 or board[0][0] * board[1][1] * board[2][2] == 8:
+        print(f'The winner is {player}')
+        GAMEOVER = True
+    if board[0][2] * board[1][1] * board[2][0] == 1 or board[0][2] * board[1][1] * board[2][0] == 8:
+        print(f'The winner is {player}')
+        GAMEOVER = True
+
+
 def draw_marker(board):
+    """Update the game visually as per the updated board"""
     for i, rows in enumerate(board):
         for j, item in enumerate(rows):
             if item == 1:
@@ -30,8 +52,10 @@ def draw_marker(board):
 
 
 def update_board(board, x, y, player):
+    """Check to see if the cell selected is valid, then select cell, check for winner, and change player"""
     if board[x][y] == 0:
         board[x][y] = player
+        check_for_winner(board)
         if player == 1:
             player = 2
             return player
@@ -43,6 +67,7 @@ def update_board(board, x, y, player):
 
 
 def cell_collision(boardRect, pos):
+    """Return indices of cell selected"""
     for x, rows in enumerate(boardRect):
         for y, columns in enumerate(rows):
             if columns.collidepoint(pos):
@@ -97,9 +122,10 @@ while gameLoop:
         if event.type == pygame.MOUSEBUTTONUP and mouseClicked == True:
             mouseclicked = False
             pos = pygame.mouse.get_pos()
-            x, y = cell_collision(boardRect, pos)
-            player = update_board(board, x, y, player)
-            print(board)
+            if not GAMEOVER:
+                x, y = cell_collision(boardRect, pos)
+                player = update_board(board, x, y, player)
+                print(board)
 
     draw_marker(board)
 
