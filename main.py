@@ -77,7 +77,7 @@ def check_for_winner(board):
         print(f'The winner is {player}')
         GAMEOVER = True
     if not 0 in board[0] and not 0 in board[1] and not 0 in board[2]:
-        WINNER = player
+        WINNER = "Tie"
         print(f"The game is a Tie")
         GAMEOVER = True
 
