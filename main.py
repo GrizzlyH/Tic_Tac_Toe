@@ -7,7 +7,9 @@ WIDTH = 900
 HEIGHT = 900
 mouseClicked = False
 player = 1
+WINNER = 0
 GAMEOVER = False
+font = pygame.font.SysFont('sans', 40)
 
 # colors
 WHITE = (255, 255, 255)
@@ -20,23 +22,63 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Tic Tac Toe")
 
 
+def end_screen(board, player, gameLoop):
+    global GAMEOVER
+    if GAMEOVER:
+        winText = f"The winner is Player {WINNER}"
+        winTextImg = font.render(winText, True, BLACK)
+        pygame.draw.rect(screen, RED, (WIDTH//2 - 160, HEIGHT//2 - 150, 320, 50))
+        screen.blit(winTextImg, (WIDTH//2 - 160, HEIGHT//2 - 150))
+
+        againText = f"Play again?"
+        againTextImg = font.render(againText, True, BLACK)
+        again = pygame.draw.rect(screen, GREEN, (WIDTH//2 - 80, HEIGHT // 2 - 80, 170, 50))
+        screen.blit(againTextImg, (WIDTH//2 - 80, HEIGHT // 2 - 80))
+
+        quitText = f"Quit"
+        quitTextImg = font.render(quitText, True, BLACK)
+        quitButton = pygame.draw.rect(screen, GREEN, (WIDTH//2 - 50, HEIGHT // 2 - 20, 80, 50))
+        screen.blit(quitTextImg, (WIDTH//2 - 50, HEIGHT // 2 - 20))
+
+        if again.collidepoint(pos):
+            GAMEOVER = False
+            player = 1
+            board = make_board()
+            print(board)
+            return gameLoop, board, player
+        elif quitButton.collidepoint(pos):
+            gameLoop = False
+            return gameLoop, board, player
+        else:
+            return gameLoop, board, player
+
+
 def check_for_winner(board):
     """Determine if a winning move has been made"""
     global GAMEOVER
+    global WINNER
     for rows in board:
         if not 0 in rows:
             if sum(rows) == 3 or sum(rows) == 6:
+                WINNER = player
                 print(f'The winner is {player}')
                 GAMEOVER = True
     for i in range(0, 3):
         if board[0][i] * board[1][i] * board[2][i] == 1 or board[0][i] * board[1][i] * board[2][i] == 8:
+            WINNER = player
             print(f'The winner is {player}')
             GAMEOVER = True
     if board[0][0] * board[1][1] * board[2][2] == 1 or board[0][0] * board[1][1] * board[2][2] == 8:
+        WINNER = player
         print(f'The winner is {player}')
         GAMEOVER = True
     if board[0][2] * board[1][1] * board[2][0] == 1 or board[0][2] * board[1][1] * board[2][0] == 8:
+        WINNER = player
         print(f'The winner is {player}')
+        GAMEOVER = True
+    if not 0 in board[0] and not 0 in board[1] and not 0 in board[2]:
+        WINNER = player
+        print(f"The game is a Tie")
         GAMEOVER = True
 
 
@@ -85,7 +127,7 @@ def board_rects(board):
     return boardRect
 
 
-def board():
+def make_board():
     """This function creates the game board in an array"""
     board = []
     for i in range(1, 4):
@@ -104,7 +146,7 @@ def draw_board():
         pygame.draw.line(screen, BLACK, (25, HEIGHT//3 * i), (WIDTH-25, HEIGHT//3 * i), 10)
 
 
-board = board()
+board = make_board()
 boardRect = board_rects(board)
 
 gameLoop = True
@@ -128,7 +170,8 @@ while gameLoop:
                 print(board)
 
     draw_marker(board)
-
+    if GAMEOVER == True:
+        gameLoop, board, player = end_screen(board, player, gameLoop)
     pygame.display.update()
 
 pygame.quit()
